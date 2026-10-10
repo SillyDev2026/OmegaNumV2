@@ -1,5 +1,16 @@
 # OmegaNum
 
+## v2.4.1 — subnormal scientific conversion
+
+`OmegaNum.toBigNum()` now scales extremely small **nonzero IEEE-754 inputs** before normalizing the mantissa/exponent. Previously dividing by `10 ^ -324` could divide by zero and incorrectly produce an infinite mantissa. The fix uses a `1e308` scaling step for subnormal inputs and preserves the existing output structure `{mantissa, exponent}`.
+
+No public signature or stored value representation changes. Run `tests/OmegaNumSubnormalRegression.server.lua` in Roblox Studio to check the smallest representable positive and negative finite numbers, zero and ordinary values.
+
+Based on the Luau optimizer/native-code documentation, no performance gain is claimed without Script Profiler measurements. The large module still needs a full strict typecheck and broader arithmetic regression coverage.
+
+---
+
+
 **OmegaNum v1.0.0** is a high-performance huge-number library for Roblox Luau.
 
 It is designed for simulators, incremental games, clickers, tycoons, and other systems that need numbers far beyond normal Lua `number` range while keeping common arithmetic and comparisons fast.

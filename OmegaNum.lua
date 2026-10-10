@@ -19,7 +19,7 @@ local HttpService = game:GetService("HttpService")
 
 local OmegaNum = {}
 
-OmegaNum.VERSION = "2.4.0"
+OmegaNum.VERSION = "2.4.1"
 OmegaNum.API_VERSION = 2
 OmegaNum.PERF_VERSION = 7
 OmegaNum.LB_VERSION = 1
@@ -2045,6 +2045,12 @@ local function normalizeBigNum(mantissa, exponent)
 	local sign = mantissa < 0 and -1 or 1
 	mantissa = math.abs(mantissa)
 
+    -- 10^-324 underflows to zero in IEEE-754. Scale subnormal inputs
+    -- into the normal range first to avoid an infinite mantissa.
+    if mantissa < 1e-308 then
+        mantissa *= 1e308
+        exponent -= 308
+    end
 	local shift = math.floor(math.log10(mantissa))
 	mantissa = mantissa / (10 ^ shift)
 	exponent = exponent + shift
